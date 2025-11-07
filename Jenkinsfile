@@ -94,7 +94,7 @@ pipeline {
                     // clone Cycle-Ops repo with token
                     sh """
                         rm -rf Cycle-Ops
-                        git clone https://${GIT_TOKEN}@github.com/nofstr25/Cycle-Ops.git
+                        git clone https://${GIT_CREDENTIALS}@github.com/nofstr25/Cycle-Ops.git
                         cd Cycle-Ops
 
                         sed -i "s|imageTag: .*|imageTag: ${IMAGE_TAG}|" values.yaml
@@ -104,7 +104,7 @@ pipeline {
 
                         git add values.yaml
                         git commit -m "Updated imageTag value to ${IMAGE_TAG}" || echo "No changes to commit"
-                        git push https://${GIT_TOKEN}@github.com/nofstr25/Cycle-Ops.git main
+                        git push https://${GIT_CREDENTIALS}@github.com/nofstr25/Cycle-Ops.git main
                     """
                 }
             }
