@@ -33,8 +33,8 @@ pipeline {
                         script {
                             // Python linting
                             sh 'pip install flake8 autopep8'
-                            sh 'autopep8 --in-place --aggressive --aggressive JenkinsBuildImage/main.py'
-                            sh 'flake8 JenkinsBuildImage/main.py'
+                            sh 'autopep8 --in-place --aggressive --aggressive main.py'
+                            sh 'flake8 main.py'
 
                             // Shell scripts linting
                             lock(resource: 'apt-lock') {
