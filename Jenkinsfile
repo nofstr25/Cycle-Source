@@ -3,14 +3,17 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHub-Credentials')
-        IMAGE_NAME = 'nofstr25/flask-aws-monitor'
+        GIT_CREDENTIALS = credentials('GitHub-Credentials') // Create this in Jenkins
+        IMAGE_NAME = 'nofstr25/cycle'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
+        SOURCE_REPO = 'https://github.com/nofstr25/Cycle-Source.git'
+        OPS_REPO = 'https://github.com/nofstr25/Cycle-Ops.git'
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Clone Source Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/nofstr25/JohnBryce-end-project.git'
+                git branch: 'main', url: "${SOURCE_REPO}"
             }
         }
 
@@ -84,16 +87,30 @@ pipeline {
                 }
             }
         }
-        stage('Push to argoCD branch') {
+        
+        stage('Update GitOps Repo') {
             steps {
                 script {
-                --
+                    // clone Cycle-Ops repo with token
+                    sh """
+                        rm -rf Cycle-Ops
+                        git clone https://${GIT_TOKEN}@github.com/nofstr25/Cycle-Ops.git
+                        cd Cycle-Ops
+
+                        sed -i "s|imageTag: .*|imageTag: ${IMAGE_TAG}|" values.yaml
+
+                        git config user.email "jenkins@ci.local"
+                        git config user.name "Jenkins CI"
+
+                        git add values.yaml
+                        git commit -m "Updated imageTag value to ${IMAGE_TAG}" || echo "No changes to commit"
+                        git push https://${GIT_TOKEN}@github.com/nofstr25/Cycle-Ops.git main
+                    """
                 }
             }
         }
+   
     }
-    
-    
 
     post {
         success {
