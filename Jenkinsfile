@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHub-Credentials')
-        GIT_CREDENTIALS = credentials('GitHub-Credentials') // Create this in Jenkins
+        GIT_CREDENTIALS = credentials('GitHub-Pat-Token') // Create this in Jenkins
         IMAGE_NAME = 'nofstr25/cycle'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         SOURCE_REPO = 'https://github.com/nofstr25/Cycle-Source.git'
